@@ -11,7 +11,7 @@ describe 'AutocompleteRequireProvider', ->
   getCompletions = ->
     cursor = editor.getLastCursor()
     start = cursor.getBeginningOfCurrentWordBufferPosition()
-    end = cursor.getBufferPosition()
+    end = editor.getEofBufferPosition()
     prefix = editor.getTextInRange([start, end])
     request =
       editor: editor
