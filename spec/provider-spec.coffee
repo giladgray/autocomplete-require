@@ -26,10 +26,14 @@ describe 'AutocompleteRequireProvider', ->
     runs ->
       provider = atom.packages.getActivePackage('autocomplete-require').mainModule.getProvider()
 
-    # waitsFor -> Object.keys(provider.completions).length > 0
+    waitsFor -> Object.keys(provider.completions).length > 0
     waitsForPromise -> atom.workspace.open('test.coffee')
     runs -> editor = atom.workspace.getActiveTextEditor()
 
   it 'returns something', ->
-    editor.setText('')
+    editor.setText('foo = fs.')
+    expect(getCompletions().length).toBeGreaterThan 0
+
+  it 'filters completion by prefix', ->
+    editor.setText('foo = fs.readFi')
     expect(getCompletions().length).toBe 2
