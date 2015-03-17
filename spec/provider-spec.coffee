@@ -32,8 +32,10 @@ describe 'AutocompleteRequireProvider', ->
 
   it 'returns something', ->
     editor.setText('foo = fs.')
-    expect(getCompletions().length).toBeGreaterThan 0
+    getCompletions().then (completions) ->
+      expect(completions.length).toBeGreaterThan 0
 
   it 'filters completion by prefix', ->
     editor.setText('foo = fs.readFi')
-    expect(getCompletions().length).toBe 2
+    getCompletions().then (completions) ->
+      expect(completions.length).toBe 2
