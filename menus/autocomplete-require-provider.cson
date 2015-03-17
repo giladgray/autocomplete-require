@@ -1,0 +1,22 @@
+# See https://atom.io/docs/latest/creating-a-package#menus for more details
+'context-menu':
+  'atom-text-editor': [
+    {
+      'label': 'Toggle autocomplete-require-provider'
+      'command': 'autocomplete-require-provider:toggle'
+    }
+  ]
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'autocomplete-require-provider'
+      'submenu': [
+        {
+          'label': 'Toggle'
+          'command': 'autocomplete-require-provider:toggle'
+        }
+      ]
+    ]
+  }
+]
