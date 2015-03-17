@@ -31,5 +31,4 @@ module.exports =
   # Required: Return a promise, an array of suggestions, or null.
   getSuggestions: ({editor, bufferPosition, scopeDescriptor, prefix}) ->
     [moduleName, prefix] = @getPrefix(editor, bufferPosition)
-    return new Promise (resolve) ->
-      resolve @getPackageCompletions(moduleName, prefix)
+    return @getPackageCompletions(moduleName, prefix)
