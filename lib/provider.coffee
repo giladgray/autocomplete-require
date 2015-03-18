@@ -1,8 +1,10 @@
+extend = require('util')._extend
+
 # return array of all possible completions for the given node package
 generatePackageCompletions = (packageName) ->
   try
     pkg = require packageName
-    return Object.keys(pkg)
+    return Object.keys(pkg).map (key) -> {text: key, rightLabel: packageName}
   catch error
     return null
 
@@ -33,8 +35,8 @@ module.exports =
 
   getPackageCompletions: (name, prefix = '') ->
     return [] unless @completions[name]
-    for fn in @completions[name] when fn.indexOf(prefix) is 0
-      {text: fn, rightLabel: name, replacementPrefix: prefix}
+    for cmp in @completions[name] when cmp.text.indexOf(prefix) is 0
+      extend cmp, {replacementPrefix: prefix}
 
   # Required: Return a promise, an array of suggestions, or null.
   getSuggestions: ({editor, bufferPosition, scopeDescriptor, prefix}) ->
@@ -51,7 +53,6 @@ module.exports =
 
 ###
 TODO
-* store real module name in cases where shorthand is used: qs = require 'querystring'
 * snippets for functions based on signature
 * option to reset cache
 * NODE_PATH variable for global modules

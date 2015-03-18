@@ -49,31 +49,23 @@ describe 'AutocompleteRequireProvider', ->
       editor.setText('readline = require "readline"\nreadline.')
       expect(getCompletions().length).toBeGreaterThan 0
 
-    it 'stores competions under defined variable name', ->
+    it 'stores completions under defined variable name', ->
       editor.setText('qs = require "querystring"\nqs.')
       expect(getCompletions().length).toBeGreaterThan 0
+
+    it 'provides right label with module name', ->
+      editor.setText('qs = require "querystring"\nqs.esc')
+      expect(getCompletions()[0].rightLabel).toEqual 'querystring'
 
   describe 'JavaScript', ->
     beforeEach ->
       waitsForPromise -> atom.workspace.open('test.js')
       runs -> editor = atom.workspace.getActiveTextEditor()
 
-    it 'returns no completions for empty string', ->
-      editor.setText('')
-      expect(getCompletions().length).toEqual 0
-
-    it 'returns something', ->
-      editor.setText('var foo = fs.')
-      expect(getCompletions().length).toBeGreaterThan 0
-
-    it 'filters completion by prefix', ->
-      editor.setText('var foo = fs.readFi')
-      expect(getCompletions().length).toBe 2
-
     it 'loads completions for other built-in libraries', ->
       editor.setText('var readline = require("readline")\nreadline.')
       expect(getCompletions().length).toBeGreaterThan 0
 
-    it 'stores competions under defined variable name', ->
+    it 'stores completions under defined variable name', ->
       editor.setText('var qs = require("querystring")\nqs.')
       expect(getCompletions().length).toBeGreaterThan 0
