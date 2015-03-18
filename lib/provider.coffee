@@ -42,10 +42,18 @@ module.exports =
     if @completions[varName]?
       return @getPackageCompletions(varName, prefix)
     else
-      match = editor.getText().match "#{varName}\\s+=\\s+require[ \\(]'(\\w+)'"
+      match = editor.getText().match "#{varName}\\s+=\\s+require[ \\(]['\"](\\w+)['\"]"
       if match?
         moduleName = match[1]
         @addCompletions(varName, generatePackageCompletions(moduleName))
-        return @getPackageCompletions(moduleName, prefix)
+        return @getPackageCompletions(varName, prefix)
       return []
 
+###
+TODO
+* store real module name in cases where shorthand is used: qs = require 'querystring'
+* snippets for functions based on signature
+* option to reset cache
+* NODE_PATH variable for global modules
+* settings page
+###

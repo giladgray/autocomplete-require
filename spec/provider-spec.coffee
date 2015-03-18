@@ -27,13 +27,53 @@ describe 'AutocompleteRequireProvider', ->
       provider = atom.packages.getActivePackage('autocomplete-require').mainModule.getProvider()
 
     waitsFor -> Object.keys(provider.completions).length > 0
-    waitsForPromise -> atom.workspace.open('test.coffee')
-    runs -> editor = atom.workspace.getActiveTextEditor()
 
-  it 'returns something', ->
-    editor.setText('foo = fs.')
-    expect(getCompletions().length).toBeGreaterThan 0
+  describe 'CoffeeScript', ->
+    beforeEach ->
+      waitsForPromise -> atom.workspace.open('test.coffee')
+      runs -> editor = atom.workspace.getActiveTextEditor()
 
-  it 'filters completion by prefix', ->
-    editor.setText('foo = fs.readFi')
-    expect(getCompletions().length).toBe 2
+    it 'returns no completions for empty string', ->
+      editor.setText('')
+      expect(getCompletions().length).toEqual 0
+
+    it 'returns something', ->
+      editor.setText('foo = fs.')
+      expect(getCompletions().length).toBeGreaterThan 0
+
+    it 'filters completion by prefix', ->
+      editor.setText('foo = fs.readFi')
+      expect(getCompletions().length).toBe 2
+
+    it 'loads completions for other built-in libraries', ->
+      editor.setText('readline = require "readline"\nreadline.')
+      expect(getCompletions().length).toBeGreaterThan 0
+
+    it 'stores competions under defined variable name', ->
+      editor.setText('qs = require "querystring"\nqs.')
+      expect(getCompletions().length).toBeGreaterThan 0
+
+  describe 'JavaScript', ->
+    beforeEach ->
+      waitsForPromise -> atom.workspace.open('test.js')
+      runs -> editor = atom.workspace.getActiveTextEditor()
+
+    it 'returns no completions for empty string', ->
+      editor.setText('')
+      expect(getCompletions().length).toEqual 0
+
+    it 'returns something', ->
+      editor.setText('var foo = fs.')
+      expect(getCompletions().length).toBeGreaterThan 0
+
+    it 'filters completion by prefix', ->
+      editor.setText('var foo = fs.readFi')
+      expect(getCompletions().length).toBe 2
+
+    it 'loads completions for other built-in libraries', ->
+      editor.setText('var readline = require("readline")\nreadline.')
+      expect(getCompletions().length).toBeGreaterThan 0
+
+    it 'stores competions under defined variable name', ->
+      editor.setText('var qs = require("querystring")\nqs.')
+      expect(getCompletions().length).toBeGreaterThan 0
