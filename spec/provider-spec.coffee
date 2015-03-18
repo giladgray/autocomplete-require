@@ -57,6 +57,12 @@ describe 'AutocompleteRequireProvider', ->
       editor.setText('qs = require "querystring"\nqs.esc')
       expect(getCompletions()[0].rightLabel).toEqual 'querystring'
 
+    it 'provides snippet with arguments for functions', ->
+      editor.setText('qs = require "querystring"\nqs.esc')
+      completion = getCompletions()[0]
+      expect(completion.text).toBeUndefined()
+      expect(completion.snippet).toEqual 'escape(${1:str})'
+
   describe 'JavaScript', ->
     beforeEach ->
       waitsForPromise -> atom.workspace.open('test.js')

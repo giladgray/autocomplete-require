@@ -4,9 +4,21 @@ extend = require('util')._extend
 generatePackageCompletions = (packageName) ->
   try
     pkg = require packageName
-    return Object.keys(pkg).map (key) -> {text: key, rightLabel: packageName}
+    for key, val of pkg
+      cmp = {rightLabel: packageName}
+      if typeof val is 'function'
+        args = val.toString()                      # generate function snippet:
+          .match(/\(([^\)]+)\)/)[1]                # 1. extract function signature from source
+          .split(/,\s+/)                           # 2. split into arguments
+          .map (arg, i) -> "${#{i + 1}:#{arg}}"    # 3. turn each argument into placeholder
+        cmp.snippet = "#{key}(#{args.join(', ')})" # 4. create snippet
+      else
+        cmp.text = key
+      cmp
   catch error
     return null
+
+isMatch = (cmp, prefix) -> (cmp.snippet ? cmp.text).indexOf(prefix) is 0
 
 module.exports =
   # This will work on JavaScript and CoffeeScript files, but not in js comments.
@@ -35,7 +47,7 @@ module.exports =
 
   getPackageCompletions: (name, prefix = '') ->
     return [] unless @completions[name]
-    for cmp in @completions[name] when cmp.text.indexOf(prefix) is 0
+    for cmp in @completions[name] when isMatch(cmp, prefix)
       extend cmp, {replacementPrefix: prefix}
 
   # Required: Return a promise, an array of suggestions, or null.
@@ -53,7 +65,6 @@ module.exports =
 
 ###
 TODO
-* snippets for functions based on signature
 * option to reset cache
 * NODE_PATH variable for global modules
 * settings page
