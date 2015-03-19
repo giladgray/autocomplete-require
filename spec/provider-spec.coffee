@@ -60,7 +60,6 @@ describe 'AutocompleteRequireProvider', ->
     it 'provides snippet with arguments for functions', ->
       editor.setText('qs = require "querystring"\nqs.esc')
       completion = getCompletions()[0]
-      expect(completion.text).toBeUndefined()
       expect(completion.snippet).toEqual 'escape(${1:str})'
 
   describe 'JavaScript', ->

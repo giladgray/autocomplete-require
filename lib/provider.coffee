@@ -1,21 +1,29 @@
-extend = require('util')._extend
+util = require 'util'
 
-# return array of all possible completions for the given node package
+getTypeHint = (value) ->
+  if util.isString(value) then "'' "
+  else if util.isArray(value)  then '[] '
+  else if util.isObject(value) then '{} '
+  else ''
+
+getFunctionArguments = (func) ->
+  # extract arguments from function signature (sneaky JS)
+  args = func.toString().match(/\(([^\)]+)\)/)?[1] ? ''
+  return args.split(/,\s+/)
+
+# returns array of all possible completions for the given Node package name.
 generatePackageCompletions = (packageName) ->
   try
     pkg = require packageName
     for key, val of pkg
-      cmp = {rightLabel: packageName}
-      if typeof val is 'function'
-        args = val.toString()                      # generate function snippet:
-          .match(/\(([^\)]+)\)/)[1]                # 1. extract function signature from source
-          .split(/,\s+/)                           # 2. split into arguments
-          .map (arg, i) -> "${#{i + 1}:#{arg}}"    # 3. turn each argument into placeholder
-        cmp.snippet = "#{key}(#{args.join(', ')})" # 4. create snippet
-      else
-        cmp.text = key
+      cmp = {text: key, rightLabel: getTypeHint(val) + packageName}
+      if util.isFunction(val)
+        # convert arguments to snippet placeholders
+        prompts = getFunctionArguments(val).map (arg, i) -> "${#{i + 1}:#{arg}}"
+        cmp.snippet = "#{key}(#{prompts.join(', ')})"
       cmp
   catch error
+    console.error "unable to load completions for '#{packageName}':", error.message
     return null
 
 isMatch = (cmp, prefix) -> (cmp.snippet ? cmp.text).indexOf(prefix) is 0
@@ -48,7 +56,7 @@ module.exports =
   getPackageCompletions: (name, prefix = '') ->
     return [] unless @completions[name]
     for cmp in @completions[name] when isMatch(cmp, prefix)
-      extend cmp, {replacementPrefix: prefix}
+      util._extend cmp, {replacementPrefix: prefix}
 
   # Required: Return a promise, an array of suggestions, or null.
   getSuggestions: ({editor, bufferPosition, scopeDescriptor, prefix}) ->
