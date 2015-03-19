@@ -82,10 +82,3 @@ module.exports =
       return [] unless match?
       @addCompletions(varName, generatePackageCompletions(match[1]))
       return @getPackageCompletions(varName, prefix)
-
-###
-TODO
-* option to reset cache
-* NODE_PATH variable for global modules
-* settings page
-###
