@@ -13,6 +13,8 @@ I'm still working on fine-tuning the ability to load packages installed in your 
 
 ## Usage
 
+First, install [Autocomplete+](https://atom.io/packages/autocomplete-plus). Then, install this package.
+
 ```coffee
 # First, require a package and assign it to a variable.
 util = require 'util'
